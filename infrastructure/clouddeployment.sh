@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RESOURCE_GROUP_NAME="rg-microservicios"
-LOCATION="eastus2"
+LOCATION="westus"
 SB_NAMESPACE_NAME="sb-age"
 CONTAINER_APPS_ENV_NAME="env-microservicios"
 

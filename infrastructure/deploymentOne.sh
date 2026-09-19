@@ -1,17 +1,15 @@
 #!/bin/bash
 
-# Crea la carpeta de despliegue
 cd ..
 
 mkdir -p microservicios
 cd microservicios
 
-# Crea todos los proyectos de microservicios
-dotnet new webapi -n GetAdults
-dotnet new webapi -n GetChildren
-dotnet new webapi -n GetAdultById
-dotnet new webapi -n GetChildById
-dotnet new webapi -n AddMember
-dotnet new webapi -n PickAge
-dotnet new webapi -n AddChild
-dotnet new webapi -n AddAdult
+dotnet new webapi -n GetAdults -o GetAdults --force
+dotnet new webapi -n GetChildren -o GetChildren --force
+dotnet new webapi -n GetAdultById -o GetAdultById --force
+dotnet new webapi -n GetChildById -o GetChildById --force
+dotnet new webapi -n AddMember -o AddMember --force
+dotnet new webapi -n PickAge -o PickAge --force
+dotnet new webapi -n AddChild -o AddChild --force
+dotnet new webapi -n AddAdult -o AddAdult --force

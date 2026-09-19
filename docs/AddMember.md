@@ -63,8 +63,8 @@ Agrega lo siguiente en tu **appsettings.json**, agrega tu cadena de conexión.
       "Microsoft.AspNetCore": "Warning"
     }
   },
-  "ServiceBus": {
-    "ConnectionString": "Endpoint=sb://<your-service-bus-namespace>.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;Shared",
+  "RabbitMQ": {
+    "HostName": "localhost",
     "QueueName": "pickage"
   },
   "AllowedHosts": "*"
@@ -77,32 +77,39 @@ Reemplaza el contenido de tu archivo **Program.cs**.
 using AddMember.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
+// Endpoint directo y limpio
 app.MapPost("/addmember", (string name, string lastname, string birthyear) =>
 {
-    var connectionString = builder.Configuration["ServiceBus:ConnectionString"];
-    var queueName = builder.Configuration["ServiceBus:QueueName"];
-    var serviceBus = new ServiceBus(connectionString, queueName);
+    var hostName = builder.Configuration["RabbitMQ:HostName"] ?? "localhost";
+    var queueName = builder.Configuration["RabbitMQ:QueueName"] ?? "pickage";
+
+    var serviceBus = new ServiceBus(hostName, queueName);
     serviceBus.SendMessageAsync(name, lastname, birthyear).GetAwaiter().GetResult();
-    return Results.Ok($"Miembro {name} agregado con éxito.");
-})
-.WithName("AddMember")
-.WithOpenApi();
+
+    return Results.Ok($"Miembro {name} agregado con éxito a RabbitMQ.");
+});
+
+app.Run();using AddMember.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+// Endpoint directo y limpio
+app.MapPost("/addmember", (string name, string lastname, string birthyear) =>
+{
+    var hostName = builder.Configuration["RabbitMQ:HostName"] ?? "localhost";
+    var queueName = builder.Configuration["RabbitMQ:QueueName"] ?? "pickage";
+
+    var serviceBus = new ServiceBus(hostName, queueName);
+    serviceBus.SendMessageAsync(name, lastname, birthyear).GetAwaiter().GetResult();
+
+    return Results.Ok($"Miembro {name} agregado con éxito a RabbitMQ.");
+});
 
 app.Run();
+ 
 ```
 
 Y por último puedes hacer la consulta usando tu archivo http, ya sabes, Swagger no siempre estará ahí.

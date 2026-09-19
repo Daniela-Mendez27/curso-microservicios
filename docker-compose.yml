@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-bus
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - microservices-net
+
+  addmember:
+    image: addmember
+    build:
+      context: ./microservicios/AddMember
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+  pickage:
+    image: pickage
+    build:
+      context: ./microservicios/PickAge
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+  addadult:
+    image: addadult
+    build:
+      context: ./microservicios/AddAdult
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+  addchild:
+    image: addchild
+    build:
+      context: ./microservicios/AddChild
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+  getAdults:
+    image: getadults
+    build:
+      context: ./microservicios/GetAdults
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
